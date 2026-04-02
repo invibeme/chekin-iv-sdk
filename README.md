@@ -87,5 +87,3 @@ The SDK supports both config callbacks and `on`/`off` event listeners.
 
 - This package is the parent-side iframe SDK only.
 - It targets the existing IV iframe app contract.
-- The SDK has no consumers yet, so breaking changes are acceptable while the contract is being finalized.
-- Parent-driven route navigation is intentionally not exposed because the current iframe app does not consume it.

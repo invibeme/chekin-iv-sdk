@@ -46,8 +46,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepack": "yarn typecheck && yarn format:check && yarn lint && yarn build",
-    "prepublishOnly": "yarn typecheck && yarn build",
+    "prepack": "yarn build",
+    "prepublishOnly": "yarn typecheck && yarn format:check && yarn lint && yarn typecheck && yarn build",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
