@@ -28,14 +28,14 @@ function getBaseUrl(version = 'latest'): string {
 export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
   const url = new URL(config.baseUrl || getBaseUrl(config.version) || DEFAULT_IV_BASE_URL);
 
-  url.searchParams.set('apiKey', config.apiKey);
+  url.searchParams.set('apikey', config.apiKey);
 
   if (config.version) {
     url.searchParams.set('version', config.version);
   }
 
-  if (config.defaultLanguage) {
-    url.searchParams.set('lang', config.defaultLanguage);
+  if (config.language) {
+    url.searchParams.set('language', config.language);
   }
 
   if (config.autoHeight !== undefined) {
@@ -59,6 +59,18 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
     postMessageConfig.enableLiveness = config.enableLiveness;
   }
 
+  if (config.forceLivenessMechanism !== undefined) {
+    postMessageConfig.forceLivenessMechanism = config.forceLivenessMechanism;
+  }
+
+  if (config.optional !== undefined) {
+    postMessageConfig.optional = config.optional;
+  }
+
+  if (config.language !== undefined) {
+    postMessageConfig.language = config.language;
+  }
+
   if (config.setupData !== undefined) {
     postMessageConfig.setupData = config.setupData;
   }
@@ -71,7 +83,7 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
 
   if (finalUrl.length > SAFE_URL_LIMIT) {
     const minimalUrl = new URL(config.baseUrl || getBaseUrl(config.version));
-    minimalUrl.searchParams.set('apiKey', config.apiKey);
+    minimalUrl.searchParams.set('apikey', config.apiKey);
 
     if (config.version) {
       minimalUrl.searchParams.set('version', config.version);
@@ -79,7 +91,6 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
 
     postMessageConfig = {
       ...postMessageConfig,
-      defaultLanguage: config.defaultLanguage,
       autoHeight: config.autoHeight,
       stylesLink: config.stylesLink,
     };

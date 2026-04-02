@@ -12,9 +12,11 @@ export interface ChekinIVSDKConfig {
   apiKey: string;
   setupData?: IVSetupData;
   mode?: IdentityVerificationType;
+  forceLivenessMechanism?: 'AUTO' | 'CLIENT' | 'SERVER';
   enableLiveness?: boolean;
+  optional?: boolean;
   version?: string;
-  defaultLanguage?: string;
+  language?: string;
   styles?: string;
   stylesLink?: string;
   autoHeight?: boolean;

@@ -30,10 +30,13 @@ const SUPPORTED_LANGUAGES = [
   'ca',
 ] as const;
 
+const LIVENESS_MECHANISMS = ['AUTO', 'CLIENT', 'SERVER'] as const;
+
 export class ChekinIVSDKValidator {
   validateConfig(config: ChekinIVSDKConfig): ValidationResult {
     const errors: ValidationIssue[] = [];
     const warnings: ValidationIssue[] = [];
+    const {language} = config;
 
     if (!config.apiKey) {
       errors.push({field: 'apiKey', message: 'API key is required', value: config.apiKey});
@@ -73,13 +76,24 @@ export class ChekinIVSDKValidator {
     }
 
     if (
-      config.defaultLanguage !== undefined &&
-      !SUPPORTED_LANGUAGES.includes(config.defaultLanguage as (typeof SUPPORTED_LANGUAGES)[number])
+      language !== undefined &&
+      !SUPPORTED_LANGUAGES.includes(language as (typeof SUPPORTED_LANGUAGES)[number])
     ) {
       warnings.push({
-        field: 'defaultLanguage',
-        message: `Unsupported language "${config.defaultLanguage}"`,
-        value: config.defaultLanguage,
+        field: 'language',
+        message: `Unsupported language "${language}"`,
+        value: language,
+      });
+    }
+
+    if (
+      config.forceLivenessMechanism !== undefined &&
+      !LIVENESS_MECHANISMS.includes(config.forceLivenessMechanism)
+    ) {
+      errors.push({
+        field: 'forceLivenessMechanism',
+        message: `forceLivenessMechanism must be one of: ${LIVENESS_MECHANISMS.join(', ')}`,
+        value: config.forceLivenessMechanism,
       });
     }
 
@@ -116,6 +130,7 @@ export class ChekinIVSDKValidator {
     }
 
     this.validateBoolean(config.enableLiveness, 'enableLiveness', errors);
+    this.validateBoolean(config.optional, 'optional', errors);
     this.validateBoolean(config.autoHeight, 'autoHeight', errors);
     this.validateBoolean(config.enableLogging, 'enableLogging', errors);
 

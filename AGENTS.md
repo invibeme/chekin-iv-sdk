@@ -23,3 +23,6 @@ This repository currently has no commit history, so there is no established conv
 
 ## Security & Configuration Tips
 Do not commit real API keys or iframe environment secrets. Keep sample configuration values clearly fake in docs and examples. Validate any new postMessage inputs carefully; this SDK communicates across window boundaries and should treat external payloads as untrusted.
+
+## Compatibility Notes
+This SDK currently has no external consumers. Prefer keeping the host SDK aligned with `../chekin-guestapp/apps/iv-sdk` over preserving backward compatibility inside this package. If the iframe contract changes, update this SDK directly and document the new public config names in `README.md`.
