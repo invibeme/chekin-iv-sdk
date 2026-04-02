@@ -21,7 +21,11 @@ export class ChekinCommunicator {
   private config: ChekinIVSDKConfig;
   private readonly handleMessageBound: (event: MessageEvent<ChekinIVMessage>) => void;
 
-  constructor(iframe: HTMLIFrameElement, config: ChekinIVSDKConfig, logger: ChekinLogger) {
+  constructor(
+    iframe: HTMLIFrameElement,
+    config: ChekinIVSDKConfig,
+    logger: ChekinLogger,
+  ) {
     this.iframe = iframe;
     this.config = config;
     this.logger = logger;

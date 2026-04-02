@@ -8,12 +8,14 @@ Use Yarn 4 for local work.
 
 - `yarn build` builds the package with `tsup`, producing ESM, CJS, sourcemaps, and `.d.ts` files.
 - `yarn dev` runs `tsup --watch` for iterative SDK development.
+- `yarn lint` runs ESLint 9 with the flat config against the TypeScript sources and build config.
+- `yarn format:check` verifies formatting with Prettier, and `yarn format` rewrites files in place.
 - `yarn typecheck` runs `tsc --noEmit` in strict mode.
 
 There is no test runner configured yet. Until one is added, use `yarn typecheck` and a quick manual integration check against the iframe host app before opening a PR.
 
 ## Coding Style & Naming Conventions
-Follow the existing TypeScript style: 2-space indentation, semicolons, single quotes, trailing commas where valid, and explicit `.js` import extensions for local ESM imports. Use `PascalCase` for classes (`ChekinIVSDK`), `camelCase` for functions and variables, and `UPPER_SNAKE_CASE` for exported constants. Keep modules focused; place browser or transport helpers under `src/utils/` or `src/communication/` rather than expanding `src/index.ts`.
+Follow the existing TypeScript style: 2-space indentation, semicolons, single quotes, trailing commas where valid, and explicit `.js` import extensions for local ESM imports. Prettier is the formatting source of truth, and ESLint 9 enforces the baseline TypeScript rules. Use `PascalCase` for classes (`ChekinIVSDK`), `camelCase` for functions and variables, and `UPPER_SNAKE_CASE` for exported constants. Keep modules focused; place browser or transport helpers under `src/utils/` or `src/communication/` rather than expanding `src/index.ts`.
 
 ## Testing Guidelines
 When adding tests, place them near the code they cover or in a dedicated `test/` directory, and name them `*.test.ts`. Prioritize validation logic, URL formatting, and message-handling edge cases. If you introduce a test framework, add a `yarn test` script and document any browser or DOM setup in `README.md`.

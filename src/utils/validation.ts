@@ -39,7 +39,11 @@ export class ChekinIVSDKValidator {
     const {language} = config;
 
     if (!config.apiKey) {
-      errors.push({field: 'apiKey', message: 'API key is required', value: config.apiKey});
+      errors.push({
+        field: 'apiKey',
+        message: 'API key is required',
+        value: config.apiKey,
+      });
     } else if (typeof config.apiKey !== 'string') {
       errors.push({
         field: 'apiKey',

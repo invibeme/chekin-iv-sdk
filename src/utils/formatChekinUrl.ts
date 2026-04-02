@@ -26,7 +26,9 @@ function getBaseUrl(version = 'latest'): string {
 }
 
 export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
-  const url = new URL(config.baseUrl || getBaseUrl(config.version) || DEFAULT_IV_BASE_URL);
+  const url = new URL(
+    config.baseUrl || getBaseUrl(config.version) || DEFAULT_IV_BASE_URL,
+  );
 
   url.searchParams.set('apikey', config.apiKey);
 
@@ -47,7 +49,7 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
   }
 
   let postMessageConfig: Partial<ChekinIVSDKConfig> = {};
-  let isLengthLimited = false;
+  const isLengthLimited = false;
 
   if (config.mode !== undefined) {
     postMessageConfig.mode = config.mode;

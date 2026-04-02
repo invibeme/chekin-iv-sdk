@@ -104,7 +104,10 @@ export class ChekinIVSDK {
     this.communicator?.updateConfig(this.config);
 
     if (this.communicator) {
-      this.communicator.send(CHEKIN_IV_EVENTS.CONFIG_UPDATE, this.getSerializableConfig());
+      this.communicator.send(
+        CHEKIN_IV_EVENTS.CONFIG_UPDATE,
+        this.getSerializableConfig(),
+      );
     }
   }
 
@@ -132,7 +135,11 @@ export class ChekinIVSDK {
     }
 
     result.warnings.forEach(warning => {
-      this.logger.warn(warning.message, {field: warning.field, value: warning.value}, 'CONFIG');
+      this.logger.warn(
+        warning.message,
+        {field: warning.field, value: warning.value},
+        'CONFIG',
+      );
     });
   }
 
