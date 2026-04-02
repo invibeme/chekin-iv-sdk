@@ -290,19 +290,18 @@ export class ChekinIVSDK {
   private getSerializableConfig(
     config: Partial<ChekinIVSDKConfig> = this.config,
   ): Partial<ChekinIVSDKConfig> {
-    const {
-      onReady,
-      onMounted,
-      onHeightChanged,
-      onStepChanged,
-      onCompleted,
-      onFailed,
-      onError,
-      onConnectionError,
-      enableLogging,
-      baseUrl,
-      ...serializableConfig
-    } = config;
+    const serializableConfig = {...config};
+
+    delete serializableConfig.onReady;
+    delete serializableConfig.onMounted;
+    delete serializableConfig.onHeightChanged;
+    delete serializableConfig.onStepChanged;
+    delete serializableConfig.onCompleted;
+    delete serializableConfig.onFailed;
+    delete serializableConfig.onError;
+    delete serializableConfig.onConnectionError;
+    delete serializableConfig.enableLogging;
+    delete serializableConfig.baseUrl;
 
     return serializableConfig;
   }
