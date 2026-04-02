@@ -1,0 +1,43 @@
+{
+  "name": "@chekinapp/iv-sdk",
+  "version": "0.1.0",
+  "description": "Client-side SDK for embedding the Chekin IV iframe",
+  "author": "vlad-svr",
+  "license": "MIT",
+  "repository": "invibeme/chekin-iv-sdk",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "chekin",
+    "sdk",
+    "iv",
+    "identity-verification",
+    "iframe"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "packageManager": "yarn@4.12.0+sha512.f45ab632439a67f8bc759bf32ead036a1f413287b9042726b7cc4818b7b49e14e9423ba49b18f9e06ea4941c1ad062385b1d8760a8d5091a1a31e5f6219afca8",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}
