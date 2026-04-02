@@ -163,8 +163,9 @@ export class ChekinIVSDK {
       this.iframe.id = CHEKIN_IV_ROOT_IFRAME_ID;
       this.iframe.setAttribute(
         'sandbox',
-        'allow-forms allow-popups allow-scripts allow-same-origin allow-camera',
+        'allow-forms allow-popups allow-scripts allow-same-origin',
       );
+      this.iframe.setAttribute('allow', 'camera *');
 
       this.iframe.onload = () => {
         if (!this.iframe) {

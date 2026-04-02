@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Chekin IV SDK sandbox for loading the published npm package and testing iframe configuration."
+    />
+    <title>Chekin IV SDK Sandbox</title>
+    <style>
+      :root {
+        --bg: #f3efe8;
+        --panel: rgba(255, 252, 246, 0.92);
+        --panel-strong: #fffdf8;
+        --border: rgba(59, 43, 23, 0.14);
+        --text: #23180d;
+        --muted: #6c5a46;
+        --accent: #bb4f18;
+        --accent-dark: #8f3c13;
+        --secondary: #285c53;
+        --danger: #a22626;
+        --shadow: 0 18px 48px rgba(53, 33, 14, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(187, 79, 24, 0.18), transparent 26%),
+          radial-gradient(circle at right, rgba(40, 92, 83, 0.18), transparent 24%),
+          linear-gradient(180deg, #faf6ef 0%, #f1ebe1 100%);
+      }
+
+      .layout {
+        width: min(1380px, calc(100% - 32px));
+        margin: 24px auto 48px;
+      }
+
+      .hero,
+      .panel,
+      .viewer,
+      .logs {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .hero {
+        padding: 28px;
+        margin-bottom: 20px;
+      }
+
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 3vw, 3rem);
+        line-height: 1;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 780px;
+      }
+
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid var(--border);
+        font-size: 13px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .section + .section {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid var(--border);
+      }
+
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 1rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .fields {
+        display: grid;
+        gap: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field.two-up {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 11px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(59, 43, 23, 0.16);
+        background: rgba(255, 255, 255, 0.92);
+        color: var(--text);
+      }
+
+      input[readonly] {
+        background: rgba(104, 90, 70, 0.08);
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(59, 43, 23, 0.16);
+        background: rgba(255, 255, 255, 0.86);
+      }
+
+      .checkbox input {
+        width: auto;
+        margin: 0;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      button {
+        padding: 12px 14px;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        transition:
+          transform 120ms ease,
+          opacity 120ms ease,
+          background 120ms ease;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .secondary {
+        background: var(--secondary);
+        color: #fff;
+      }
+
+      .neutral {
+        background: #dfd5c7;
+        color: var(--text);
+      }
+
+      .danger {
+        background: var(--danger);
+        color: #fff;
+      }
+
+      .viewer {
+        padding: 18px;
+        min-height: 760px;
+      }
+
+      .viewer-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .viewer-head h2,
+      .logs h2 {
+        margin: 0;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      #sdk-root {
+        min-height: 640px;
+        border-radius: 18px;
+        border: 1px dashed rgba(59, 43, 23, 0.2);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.94),
+          rgba(246, 240, 230, 0.92)
+        );
+        overflow: hidden;
+      }
+
+      .logs {
+        margin-top: 20px;
+        padding: 18px;
+      }
+
+      #logs {
+        margin-top: 12px;
+        padding: 14px;
+        min-height: 180px;
+        max-height: 260px;
+        overflow: auto;
+        border-radius: 16px;
+        background: #1d1712;
+        color: #f7efe3;
+        font:
+          12px/1.5 'SFMono-Regular',
+          Consolas,
+          monospace;
+        white-space: pre-wrap;
+      }
+
+      .note {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 1080px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .viewer {
+          min-height: 620px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .layout {
+          width: min(100% - 20px, 100%);
+          margin-top: 10px;
+        }
+
+        .hero,
+        .panel,
+        .viewer,
+        .logs {
+          border-radius: 18px;
+        }
+
+        .actions,
+        .field.two-up {
+          grid-template-columns: 1fr;
+        }
+
+        #sdk-root {
+          min-height: 520px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <section class="hero">
+        <h1>Chekin IV SDK Sandbox</h1>
+        <p>
+          Standalone host page for testing the published
+          <code>@chekinapp/iv-sdk</code> package from npm. Load the package, adjust IV
+          configuration, render the iframe, and inspect callbacks and emitted events.
+        </p>
+        <div class="status-row">
+          <div class="pill" id="package-status">Package: not loaded</div>
+          <div class="pill" id="instance-status">SDK: not initialized</div>
+          <div class="pill" id="render-status">Iframe: not rendered</div>
+        </div>
+      </section>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="section">
+            <h2>Package Loader</h2>
+            <div class="fields">
+              <div class="field">
+                <label for="packageSource">Package Source</label>
+                <select id="packageSource" onchange="updatePackageUrl()">
+                  <option value="npm" selected>npm (jsDelivr)</option>
+                  <option value="local">local path / URL</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="packageVersion">Published Package Version</label>
+                <select id="packageVersion" onchange="updatePackageUrl()">
+                  <option value="latest" selected>latest</option>
+                  <option value="custom">custom</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="customPackageVersion">Custom npm version</label>
+                <input
+                  id="customPackageVersion"
+                  type="text"
+                  placeholder="Example: 0.1.0"
+                  disabled
+                />
+              </div>
+              <div class="field">
+                <label for="localPackagePath">Local module path or URL</label>
+                <input
+                  id="localPackagePath"
+                  type="text"
+                  value="./dist/index.js"
+                  placeholder="./dist/index.js or http://localhost:3000/dist/index.js"
+                  disabled
+                />
+              </div>
+              <div class="field">
+                <label for="packageUrl">Resolved module import</label>
+                <input id="packageUrl" type="text" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>IV Config</h2>
+            <div class="fields">
+              <div class="field">
+                <label for="apiKey">API Key</label>
+                <input
+                  id="apiKey"
+                  type="text"
+                  value="replace-with-real-chekin-api-key"
+                  placeholder="Required"
+                />
+              </div>
+              <div class="field">
+                <label for="baseUrl">Iframe Base URL</label>
+                <input
+                  id="baseUrl"
+                  type="url"
+                  value="https://cdn.chekin.com/iv-sdk/latest/index.html"
+                  placeholder="https://cdn.chekin.com/iv-sdk/latest/index.html"
+                />
+              </div>
+              <div class="field two-up">
+                <div class="field">
+                  <label for="version">Iframe Version</label>
+                  <input
+                    id="version"
+                    type="text"
+                    value="latest"
+                    placeholder="latest, dev, 0.1.0"
+                  />
+                </div>
+                <div class="field">
+                  <label for="language">Language</label>
+                  <select id="language">
+                    <option value="en" selected>en</option>
+                    <option value="es">es</option>
+                    <option value="fr">fr</option>
+                    <option value="de">de</option>
+                    <option value="it">it</option>
+                    <option value="pt">pt</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field two-up">
+                <div class="field">
+                  <label for="mode">Mode</label>
+                  <select id="mode">
+                    <option value="ocr" selected>ocr</option>
+                    <option value="biomatch">biomatch</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="forceLivenessMechanism">Force Liveness Mechanism</label>
+                  <select id="forceLivenessMechanism">
+                    <option value="">unset</option>
+                    <option value="AUTO">AUTO</option>
+                    <option value="CLIENT">CLIENT</option>
+                    <option value="SERVER">SERVER</option>
+                  </select>
+                </div>
+              </div>
+              <label class="checkbox">
+                <input id="enableLiveness" type="checkbox" checked />
+                <span>Enable liveness</span>
+              </label>
+              <label class="checkbox">
+                <input id="optional" type="checkbox" />
+                <span>Mark verification as optional</span>
+              </label>
+              <label class="checkbox">
+                <input id="autoHeight" type="checkbox" checked />
+                <span>Auto height</span>
+              </label>
+              <label class="checkbox">
+                <input id="enableLogging" type="checkbox" checked />
+                <span>Enable SDK debug logging</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Setup Data</h2>
+            <div class="fields">
+              <div class="field two-up">
+                <div class="field">
+                  <label for="countryCode">Country Code</label>
+                  <input
+                    id="countryCode"
+                    type="text"
+                    value="ES"
+                    maxlength="2"
+                    placeholder="ES"
+                  />
+                </div>
+                <label class="checkbox">
+                  <input id="isLeader" type="checkbox" checked />
+                  <span>Guest is booking leader</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Styling</h2>
+            <div class="fields">
+              <div class="field">
+                <label for="stylesLink">Stylesheet URL</label>
+                <input
+                  id="stylesLink"
+                  type="url"
+                  placeholder="https://example.com/iv-sdk.css"
+                />
+              </div>
+              <div class="field">
+                <label for="styles">Inline CSS</label>
+                <textarea
+                  id="styles"
+                  placeholder=".page { background: #fffaf2; }"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" type="button" onclick="loadPackage()">
+              Load Package
+            </button>
+            <button class="secondary" type="button" onclick="initializeSDK()">
+              Initialize SDK
+            </button>
+            <button class="primary" type="button" onclick="initializeAndRender()">
+              Initialize + Render
+            </button>
+            <button class="secondary" type="button" onclick="renderSDK()">
+              Render SDK
+            </button>
+            <button class="danger" type="button" onclick="destroySDK()">
+              Destroy SDK
+            </button>
+            <button class="neutral" type="button" onclick="clearLogs()">
+              Clear Logs
+            </button>
+            <button class="neutral" type="button" onclick="saveConfiguration()">
+              Save Config
+            </button>
+            <button class="neutral" type="button" onclick="resetConfiguration()">
+              Reset Config
+            </button>
+          </div>
+
+          <p class="note">
+            The loader can import either the published npm package from jsDelivr or a
+            local module path such as <code>./dist/index.js</code>. Use a real Chekin API
+            key before rendering.
+          </p>
+        </section>
+
+        <section>
+          <div class="viewer">
+            <div class="viewer-head">
+              <h2>Iframe Viewer</h2>
+              <div class="pill" id="viewer-url">Iframe URL: pending</div>
+            </div>
+            <div id="sdk-root"></div>
+          </div>
+
+          <div class="logs">
+            <h2>Logs</h2>
+            <div id="logs">Logs will appear here.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module">
+      const STORAGE_KEY = 'chekin_iv_sdk_sandbox_config';
+      const logsElement = document.getElementById('logs');
+      const packageStatus = document.getElementById('package-status');
+      const instanceStatus = document.getElementById('instance-status');
+      const renderStatus = document.getElementById('render-status');
+      const viewerUrl = document.getElementById('viewer-url');
+      const sdkRoot = document.getElementById('sdk-root');
+
+      let sdkModule = null;
+      let sdkInstance = null;
+      let packageLoadNonce = 0;
+
+      function log(message, payload) {
+        const stamp = new Date().toLocaleTimeString();
+        const line = `[${stamp}] ${message}`;
+        const body =
+          payload === undefined ? line : `${line}\n${stringifyValue(payload, 2)}`;
+
+        logsElement.textContent = `${body}\n\n${logsElement.textContent}`.trim();
+        console.log(message, payload);
+      }
+
+      function stringifyValue(value, spacing = 0) {
+        if (typeof value === 'string') {
+          return value;
+        }
+
+        try {
+          return JSON.stringify(value, null, spacing);
+        } catch {
+          return String(value);
+        }
+      }
+
+      function getPackageSpecifier() {
+        const packageVersion = document.getElementById('packageVersion').value;
+        const customVersion = document
+          .getElementById('customPackageVersion')
+          .value.trim();
+
+        if (packageVersion === 'custom' && customVersion) {
+          return customVersion;
+        }
+
+        return 'latest';
+      }
+
+      function getPackageUrl() {
+        const packageSource = document.getElementById('packageSource').value;
+
+        if (packageSource === 'local') {
+          const localPackagePath = document
+            .getElementById('localPackagePath')
+            .value.trim();
+
+          return localPackagePath || './dist/index.js';
+        }
+
+        const specifier = getPackageSpecifier();
+        return `https://cdn.jsdelivr.net/npm/@chekinapp/iv-sdk@${specifier}/dist/index.js`;
+      }
+
+      function updatePackageUrl() {
+        const packageSource = document.getElementById('packageSource').value;
+        const packageVersion = document.getElementById('packageVersion').value;
+        const customVersionInput = document.getElementById('customPackageVersion');
+        const localPackagePathInput = document.getElementById('localPackagePath');
+
+        customVersionInput.disabled =
+          packageSource !== 'npm' || packageVersion !== 'custom';
+        document.getElementById('packageVersion').disabled = packageSource !== 'npm';
+        localPackagePathInput.disabled = packageSource !== 'local';
+        document.getElementById('packageUrl').value = getPackageUrl();
+      }
+
+      function collectConfig() {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        const baseUrl = document.getElementById('baseUrl').value.trim();
+        const version = document.getElementById('version').value.trim();
+        const language = document.getElementById('language').value.trim();
+        const mode = document.getElementById('mode').value;
+        const forceLivenessMechanism = document
+          .getElementById('forceLivenessMechanism')
+          .value.trim();
+        const stylesLink = document.getElementById('stylesLink').value.trim();
+        const styles = document.getElementById('styles').value.trim();
+        const countryCode = document
+          .getElementById('countryCode')
+          .value.trim()
+          .toUpperCase();
+        const isLeader = document.getElementById('isLeader').checked;
+
+        const config = {
+          apiKey,
+          mode,
+          enableLiveness: document.getElementById('enableLiveness').checked,
+          optional: document.getElementById('optional').checked,
+          autoHeight: document.getElementById('autoHeight').checked,
+          enableLogging: document.getElementById('enableLogging').checked,
+          onReady: () => log('Callback: onReady'),
+          onMounted: () => log('Callback: onMounted'),
+          onHeightChanged: height => log('Callback: onHeightChanged', height),
+          onStepChanged: step => log('Callback: onStepChanged', step),
+          onCompleted: data => log('Callback: onCompleted', data),
+          onFailed: error => log('Callback: onFailed', error),
+          onError: error => log('Callback: onError', error),
+          onConnectionError: error => log('Callback: onConnectionError', error),
+        };
+
+        if (baseUrl) {
+          config.baseUrl = baseUrl;
+        }
+
+        if (version) {
+          config.version = version;
+        }
+
+        if (language) {
+          config.language = language;
+        }
+
+        if (forceLivenessMechanism) {
+          config.forceLivenessMechanism = forceLivenessMechanism;
+        }
+
+        if (stylesLink) {
+          config.stylesLink = stylesLink;
+        }
+
+        if (styles) {
+          config.styles = styles;
+        }
+
+        if (countryCode || isLeader) {
+          config.setupData = {};
+
+          if (countryCode) {
+            config.setupData.countryCode = countryCode;
+          }
+
+          if (isLeader) {
+            config.setupData.isLeader = true;
+          }
+        }
+
+        return config;
+      }
+
+      function bindEventListeners() {
+        if (!sdkInstance || !sdkModule?.CHEKIN_IV_EVENTS) {
+          return;
+        }
+
+        Object.entries(sdkModule.CHEKIN_IV_EVENTS).forEach(([, eventName]) => {
+          sdkInstance.on(eventName, payload => {
+            log(`Event: ${eventName}`, payload);
+          });
+        });
+      }
+
+      async function loadPackage() {
+        const packageUrl = getPackageUrl();
+        const packageSource = document.getElementById('packageSource').value;
+        packageLoadNonce += 1;
+        const nonce = packageLoadNonce;
+
+        packageStatus.textContent = 'Package: loading';
+        log('Loading package module', {packageSource, packageUrl});
+
+        try {
+          sdkModule = await import(`${packageUrl}?cacheBust=${nonce}`);
+          packageStatus.textContent =
+            packageSource === 'local'
+              ? 'Package: loaded (local)'
+              : `Package: loaded (${getPackageSpecifier()})`;
+          log('Package loaded', Object.keys(sdkModule));
+        } catch (error) {
+          sdkModule = null;
+          packageStatus.textContent = 'Package: load failed';
+          log('Package load failed', error?.message || error);
+          throw error;
+        }
+      }
+
+      async function ensurePackageLoaded() {
+        if (!sdkModule) {
+          await loadPackage();
+        }
+      }
+
+      async function initializeSDK() {
+        await ensurePackageLoaded();
+
+        if (sdkInstance) {
+          sdkInstance.destroy();
+          sdkInstance = null;
+          renderStatus.textContent = 'Iframe: cleared';
+          sdkRoot.innerHTML = '';
+        }
+
+        const config = collectConfig();
+        viewerUrl.textContent = `Iframe URL: ${config.baseUrl || 'default'} | version=${config.version || 'latest'}`;
+
+        log('Initializing SDK', config);
+        sdkInstance = new sdkModule.ChekinIVSDK(config);
+        bindEventListeners();
+        instanceStatus.textContent = 'SDK: initialized';
+      }
+
+      async function renderSDK() {
+        if (!sdkInstance) {
+          await initializeSDK();
+        }
+
+        log('Rendering SDK into #sdk-root');
+        sdkRoot.innerHTML = '';
+        await sdkInstance.render(sdkRoot);
+        renderStatus.textContent = 'Iframe: rendered';
+      }
+
+      async function initializeAndRender() {
+        await initializeSDK();
+        await renderSDK();
+      }
+
+      function destroySDK() {
+        if (sdkInstance) {
+          sdkInstance.destroy();
+          sdkInstance = null;
+          log('SDK destroyed');
+        }
+
+        sdkRoot.innerHTML = '';
+        instanceStatus.textContent = 'SDK: not initialized';
+        renderStatus.textContent = 'Iframe: not rendered';
+        viewerUrl.textContent = 'Iframe URL: pending';
+      }
+
+      function clearLogs() {
+        logsElement.textContent = 'Logs cleared.';
+      }
+
+      function saveConfiguration() {
+        const data = {
+          packageSource: document.getElementById('packageSource').value,
+          packageVersion: document.getElementById('packageVersion').value,
+          customPackageVersion: document.getElementById('customPackageVersion').value,
+          localPackagePath: document.getElementById('localPackagePath').value,
+          apiKey: document.getElementById('apiKey').value,
+          baseUrl: document.getElementById('baseUrl').value,
+          version: document.getElementById('version').value,
+          language: document.getElementById('language').value,
+          mode: document.getElementById('mode').value,
+          forceLivenessMechanism: document.getElementById('forceLivenessMechanism').value,
+          enableLiveness: document.getElementById('enableLiveness').checked,
+          optional: document.getElementById('optional').checked,
+          autoHeight: document.getElementById('autoHeight').checked,
+          enableLogging: document.getElementById('enableLogging').checked,
+          countryCode: document.getElementById('countryCode').value,
+          isLeader: document.getElementById('isLeader').checked,
+          stylesLink: document.getElementById('stylesLink').value,
+          styles: document.getElementById('styles').value,
+        };
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        log('Configuration saved');
+      }
+
+      function loadConfiguration() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          log('No saved configuration found');
+          return;
+        }
+
+        const data = JSON.parse(raw);
+        document.getElementById('packageSource').value = data.packageSource || 'npm';
+        document.getElementById('packageVersion').value = data.packageVersion || 'latest';
+        document.getElementById('customPackageVersion').value =
+          data.customPackageVersion || '';
+        document.getElementById('localPackagePath').value =
+          data.localPackagePath || './dist/index.js';
+        document.getElementById('apiKey').value = data.apiKey || '';
+        document.getElementById('baseUrl').value =
+          data.baseUrl || 'https://cdn.chekin.com/iv-sdk/latest/index.html';
+        document.getElementById('version').value = data.version || 'latest';
+        document.getElementById('language').value = data.language || 'en';
+        document.getElementById('mode').value = data.mode || 'ocr';
+        document.getElementById('forceLivenessMechanism').value =
+          data.forceLivenessMechanism || '';
+        document.getElementById('enableLiveness').checked = data.enableLiveness ?? true;
+        document.getElementById('optional').checked = data.optional ?? false;
+        document.getElementById('autoHeight').checked = data.autoHeight ?? true;
+        document.getElementById('enableLogging').checked = data.enableLogging ?? true;
+        document.getElementById('countryCode').value = data.countryCode || 'ES';
+        document.getElementById('isLeader').checked = data.isLeader ?? true;
+        document.getElementById('stylesLink').value = data.stylesLink || '';
+        document.getElementById('styles').value = data.styles || '';
+
+        updatePackageUrl();
+        log('Configuration restored');
+      }
+
+      function resetConfiguration() {
+        localStorage.removeItem(STORAGE_KEY);
+
+        document.getElementById('packageSource').value = 'npm';
+        document.getElementById('packageVersion').value = 'latest';
+        document.getElementById('customPackageVersion').value = '';
+        document.getElementById('localPackagePath').value = './dist/index.js';
+        document.getElementById('apiKey').value = 'replace-with-real-chekin-api-key';
+        document.getElementById('baseUrl').value =
+          'https://cdn.chekin.com/iv-sdk/latest/index.html';
+        document.getElementById('version').value = 'latest';
+        document.getElementById('language').value = 'en';
+        document.getElementById('mode').value = 'ocr';
+        document.getElementById('forceLivenessMechanism').value = '';
+        document.getElementById('enableLiveness').checked = true;
+        document.getElementById('optional').checked = false;
+        document.getElementById('autoHeight').checked = true;
+        document.getElementById('enableLogging').checked = true;
+        document.getElementById('countryCode').value = 'ES';
+        document.getElementById('isLeader').checked = true;
+        document.getElementById('stylesLink').value = '';
+        document.getElementById('styles').value = '';
+
+        updatePackageUrl();
+        log('Configuration reset');
+      }
+
+      document
+        .getElementById('localPackagePath')
+        .addEventListener('input', updatePackageUrl);
+      document
+        .getElementById('customPackageVersion')
+        .addEventListener('input', updatePackageUrl);
+
+      window.loadPackage = loadPackage;
+      window.initializeSDK = initializeSDK;
+      window.renderSDK = renderSDK;
+      window.initializeAndRender = initializeAndRender;
+      window.destroySDK = destroySDK;
+      window.clearLogs = clearLogs;
+      window.saveConfiguration = saveConfiguration;
+      window.resetConfiguration = resetConfiguration;
+      window.updatePackageUrl = updatePackageUrl;
+
+      updatePackageUrl();
+      loadConfiguration();
+    </script>
+  </body>
+</html>
