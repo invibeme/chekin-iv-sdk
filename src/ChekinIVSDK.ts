@@ -38,6 +38,7 @@ export class ChekinIVSDK {
     });
 
     this.validateConfig();
+    this.bindReactiveLanguage(config);
   }
 
   initialize(config: ChekinIVSDKConfig): void {
@@ -50,6 +51,7 @@ export class ChekinIVSDK {
       level: this.config.enableLogging ? LOG_LEVELS.DEBUG : LOG_LEVELS.INFO,
     });
     this.validateConfig();
+    this.bindReactiveLanguage(config);
     this.communicator?.updateConfig(this.config);
   }
 
@@ -285,6 +287,53 @@ export class ChekinIVSDK {
     this.observer.observe(container.ownerDocument || document, {
       childList: true,
       subtree: true,
+    });
+  }
+
+  private bindReactiveLanguage(config: ChekinIVSDKConfig): void {
+    if (Object.getOwnPropertyDescriptor(config, 'language')?.set) {
+      return;
+    }
+
+    let currentLanguage = config.language;
+
+    Object.defineProperty(config, 'language', {
+      configurable: true,
+      enumerable: true,
+      get: () => currentLanguage,
+      set: value => {
+        currentLanguage = value;
+        const nextConfig = {
+          ...this.config,
+          language: value,
+        };
+
+        const result = this.validator.validateConfig(nextConfig);
+        if (!result.isValid) {
+          throw new Error(
+            `SDK configuration validation failed: ${result.errors.map(issue => issue.message).join(', ')}`,
+          );
+        }
+
+        result.warnings.forEach(warning => {
+          if (warning.field === 'language') {
+            this.logger.warn(
+              warning.message,
+              {field: warning.field, value: warning.value},
+              'CONFIG',
+            );
+          }
+        });
+
+        this.config = nextConfig;
+        this.communicator?.updateConfig(this.config);
+
+        if (this.pendingPostMessageConfig) {
+          this.pendingPostMessageConfig.language = value;
+        }
+
+        this.communicator?.send(CHEKIN_IV_EVENTS.CONFIG_UPDATE, {language: value});
+      },
     });
   }
 
