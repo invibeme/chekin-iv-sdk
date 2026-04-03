@@ -14,6 +14,7 @@ import {
 } from './types.js';
 import {formatChekinUrl} from './utils/formatChekinUrl.js';
 import {ChekinLogger} from './utils/logger.js';
+import {normalizeConfig} from './utils/normalizeConfig.js';
 import {ChekinIVSDKValidator} from './utils/validation.js';
 
 export class ChekinIVSDK {
@@ -27,9 +28,11 @@ export class ChekinIVSDK {
   private pendingPostMessageConfig?: Partial<ChekinIVSDKConfig>;
 
   constructor(config: ChekinIVSDKConfig) {
+    const normalizedConfig = normalizeConfig(config) as ChekinIVSDKConfig;
+
     this.config = {
       autoHeight: false,
-      ...config,
+      ...normalizedConfig,
     };
     this.validator = new ChekinIVSDKValidator();
     this.logger = new ChekinLogger({
@@ -42,9 +45,11 @@ export class ChekinIVSDK {
   }
 
   initialize(config: ChekinIVSDKConfig): void {
+    const normalizedConfig = normalizeConfig(config);
+
     this.config = {
       ...this.config,
-      ...config,
+      ...normalizedConfig,
     };
     this.logger.updateConfig({
       enabled: this.config.enableLogging ?? false,
@@ -86,9 +91,10 @@ export class ChekinIVSDK {
   }
 
   updateConfig(newConfig: Partial<ChekinIVSDKConfig>): void {
+    const normalizedConfig = normalizeConfig(newConfig);
     const nextConfig = {
       ...this.config,
-      ...newConfig,
+      ...normalizedConfig,
     };
 
     const result = this.validator.validateConfig(nextConfig);
