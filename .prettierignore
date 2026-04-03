@@ -1,5 +1,6 @@
 dist
 node_modules
 .yarn
+sdk-sandbox.html
 yarn.lock
 *.md
