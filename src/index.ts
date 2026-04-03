@@ -13,6 +13,7 @@ export {
 } from './constants.js';
 export {formatChekinUrl} from './utils/formatChekinUrl.js';
 export {ChekinLogger} from './utils/logger.js';
+export {normalizeConfig, normalizeMode} from './utils/normalizeConfig.js';
 export {ChekinIVSDKValidator} from './utils/validation.js';
 
 export type {
