@@ -515,6 +515,7 @@
 
       let sdkModule = null;
       let sdkInstance = null;
+      let sdkConfig = null;
       let packageLoadNonce = 0;
       let isLoading = false;
 
@@ -783,15 +784,17 @@
           if (sdkInstance) {
             sdkInstance.destroy();
             sdkInstance = null;
+            sdkConfig = null;
             renderStatus.textContent = 'Iframe: cleared';
             sdkRoot.innerHTML = '';
           }
 
           const config = collectConfig();
+          sdkConfig = config;
           viewerUrl.textContent = `Iframe URL: ${config.baseUrl || 'default'} | version=${config.version || 'latest'}`;
 
           log('Initializing SDK', config);
-          sdkInstance = new sdkModule.ChekinIVSDK(config);
+          sdkInstance = new sdkModule.ChekinIVSDK(sdkConfig);
           bindEventListeners();
           instanceStatus.textContent = 'SDK: initialized';
         } catch (error) {
@@ -850,6 +853,7 @@
           if (sdkInstance) {
             sdkInstance.destroy();
             sdkInstance = null;
+            sdkConfig = null;
             log('SDK destroyed');
           }
 
@@ -941,12 +945,26 @@
         });
       }
 
+      function syncReactiveLanguage() {
+        const nextLanguage = document.getElementById('language').value.trim();
+
+        if (!sdkConfig || !sdkInstance) {
+          return;
+        }
+
+        sdkConfig.language = nextLanguage;
+        log('Reactive language update sent', { language: nextLanguage });
+      }
+
       document
         .getElementById('localPackagePath')
         .addEventListener('input', updatePackageUrl);
       document
         .getElementById('customPackageVersion')
         .addEventListener('input', updatePackageUrl);
+      document
+        .getElementById('language')
+        .addEventListener('change', syncReactiveLanguage);
 
       window.loadPackage = loadPackage;
       window.initializeSDK = initializeSDK;

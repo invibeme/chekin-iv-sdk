@@ -4,7 +4,6 @@ import {ChekinIVSDKConfig} from '../types.js';
 export interface UrlConfigResult {
   url: string;
   postMessageConfig?: Partial<ChekinIVSDKConfig>;
-  isLengthLimited: boolean;
 }
 
 const VERSION_ALIASES = {
@@ -12,8 +11,6 @@ const VERSION_ALIASES = {
   development: 'dev',
   dev: 'dev',
 } as const;
-
-const SAFE_URL_LIMIT = 2000;
 
 function getBaseUrl(version = 'latest'): string {
   const normalizedVersion = VERSION_ALIASES[version as keyof typeof VERSION_ALIASES]
@@ -40,6 +37,30 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
     url.searchParams.set('language', config.language);
   }
 
+  url.searchParams.set('mode', config.mode ?? IDENTITY_VERIFICATION_TYPES.ocr);
+
+  if (config.enableLiveness !== undefined) {
+    url.searchParams.set('enableLiveness', String(config.enableLiveness));
+  }
+
+  if (config.forceLivenessMechanism !== undefined) {
+    url.searchParams.set('forceLivenessMechanism', config.forceLivenessMechanism);
+  }
+
+  if (config.optional !== undefined) {
+    url.searchParams.set('optional', String(config.optional));
+  }
+
+  if (config.setupData !== undefined) {
+    if (config.setupData.countryCode !== undefined) {
+      url.searchParams.set('countryCode', config.setupData.countryCode);
+    }
+
+    if (config.setupData.isLeader !== undefined) {
+      url.searchParams.set('isLeader', String(config.setupData.isLeader));
+    }
+  }
+
   if (config.autoHeight !== undefined) {
     url.searchParams.set('autoHeight', String(config.autoHeight));
   }
@@ -48,66 +69,19 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
     url.searchParams.set('stylesLink', encodeURIComponent(config.stylesLink));
   }
 
-  let postMessageConfig: Partial<ChekinIVSDKConfig> = {};
-  const isLengthLimited = false;
-
-  if (config.mode !== undefined) {
-    postMessageConfig.mode = config.mode;
-  } else {
-    postMessageConfig.mode = IDENTITY_VERIFICATION_TYPES.ocr;
-  }
-
-  if (config.enableLiveness !== undefined) {
-    postMessageConfig.enableLiveness = config.enableLiveness;
-  }
-
-  if (config.forceLivenessMechanism !== undefined) {
-    postMessageConfig.forceLivenessMechanism = config.forceLivenessMechanism;
-  }
-
-  if (config.optional !== undefined) {
-    postMessageConfig.optional = config.optional;
-  }
-
-  if (config.language !== undefined) {
-    postMessageConfig.language = config.language;
-  }
-
-  if (config.setupData !== undefined) {
-    postMessageConfig.setupData = config.setupData;
-  }
+  const postMessageConfig: Partial<ChekinIVSDKConfig> = {};
 
   if (config.styles !== undefined) {
     postMessageConfig.styles = config.styles;
   }
 
-  const finalUrl = url.toString();
-
-  if (finalUrl.length > SAFE_URL_LIMIT) {
-    const minimalUrl = new URL(config.baseUrl || getBaseUrl(config.version));
-    minimalUrl.searchParams.set('apikey', config.apiKey);
-
-    if (config.version) {
-      minimalUrl.searchParams.set('version', config.version);
-    }
-
-    postMessageConfig = {
-      ...postMessageConfig,
-      autoHeight: config.autoHeight,
-      stylesLink: config.stylesLink,
-    };
-
-    return {
-      url: minimalUrl.toString(),
-      postMessageConfig,
-      isLengthLimited: true,
-    };
+  if (config.stylesLink !== undefined) {
+    postMessageConfig.stylesLink = config.stylesLink;
   }
 
   return {
-    url: finalUrl,
+    url: url.toString(),
     postMessageConfig:
       Object.keys(postMessageConfig).length > 0 ? postMessageConfig : undefined,
-    isLengthLimited,
   };
 }

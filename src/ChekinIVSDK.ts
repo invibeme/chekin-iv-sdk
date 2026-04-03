@@ -308,8 +308,6 @@ export class ChekinIVSDK {
           language: value,
         };
 
-        console.log(nextConfig);
-
         const result = this.validator.validateConfig(nextConfig);
         if (!result.isValid) {
           throw new Error(
@@ -333,8 +331,6 @@ export class ChekinIVSDK {
         if (this.pendingPostMessageConfig) {
           this.pendingPostMessageConfig.language = value;
         }
-
-        console.log(value);
 
         this.communicator?.send(CHEKIN_IV_EVENTS.CONFIG_UPDATE, {language: value});
       },

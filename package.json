@@ -1,6 +1,6 @@
 {
   "name": "@chekinapp/iv-sdk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Client-side SDK for embedding the Chekin IV iframe",
   "author": "vlad-svr",
   "license": "MIT",
