@@ -1,6 +1,7 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#" translate="no">
   <head>
+    <meta name="google" content="notranslate" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
@@ -8,357 +9,273 @@
       content="Chekin IV SDK sandbox for loading the published npm package and testing iframe configuration."
     />
     <title>Chekin IV SDK Sandbox</title>
+
     <style>
-      :root {
-        --bg: #f3efe8;
-        --panel: rgba(255, 252, 246, 0.92);
-        --panel-strong: #fffdf8;
-        --border: rgba(59, 43, 23, 0.14);
-        --text: #23180d;
-        --muted: #6c5a46;
-        --accent: #bb4f18;
-        --accent-dark: #8f3c13;
-        --secondary: #285c53;
-        --danger: #a22626;
-        --shadow: 0 18px 48px rgba(53, 33, 14, 0.12);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
       body {
+        font-family: Arial, sans-serif;
         margin: 0;
-        min-height: 100vh;
-        font-family: 'Avenir Next', 'Segoe UI', sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(circle at top left, rgba(187, 79, 24, 0.18), transparent 26%),
-          radial-gradient(circle at right, rgba(40, 92, 83, 0.18), transparent 24%),
-          linear-gradient(180deg, #faf6ef 0%, #f1ebe1 100%);
+        padding: 20px;
+        background-color: #f5f5f5;
       }
 
-      .layout {
-        width: min(1380px, calc(100% - 32px));
-        margin: 24px auto 48px;
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
       }
 
-      .hero,
-      .panel,
-      .viewer,
-      .logs {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(12px);
-      }
-
-      .hero {
-        padding: 28px;
+      .controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
         margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
-      .hero h1 {
-        margin: 0 0 8px;
-        font-size: clamp(2rem, 3vw, 3rem);
-        line-height: 1;
+      .form-group {
+        margin-bottom: 15px;
       }
 
-      .hero p {
-        margin: 0;
-        color: var(--muted);
-        max-width: 780px;
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
       }
 
-      .status-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 18px;
-      }
-
-      .pill {
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.76);
-        border: 1px solid var(--border);
-        font-size: 13px;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
-        gap: 20px;
-        align-items: start;
-      }
-
-      .panel {
-        padding: 22px;
-      }
-
-      .section + .section {
-        margin-top: 18px;
-        padding-top: 18px;
-        border-top: 1px solid var(--border);
-      }
-
-      .section h2 {
-        margin: 0 0 14px;
-        font-size: 1rem;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-      }
-
-      .fields {
-        display: grid;
-        gap: 12px;
-      }
-
-      .field {
-        display: grid;
-        gap: 6px;
-      }
-
-      .field.two-up {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      label {
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      input,
-      select,
-      textarea,
-      button {
-        font: inherit;
-      }
-
-      input,
-      select,
-      textarea {
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
         width: 100%;
-        padding: 11px 12px;
-        border-radius: 14px;
-        border: 1px solid rgba(59, 43, 23, 0.16);
-        background: rgba(255, 255, 255, 0.92);
-        color: var(--text);
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
       }
 
-      input[readonly] {
-        background: rgba(104, 90, 70, 0.08);
-      }
-
-      textarea {
-        min-height: 110px;
+      .form-group textarea {
+        height: 80px;
         resize: vertical;
       }
 
-      .checkbox {
+      .checkbox-group {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 11px 12px;
-        border-radius: 14px;
-        border: 1px solid rgba(59, 43, 23, 0.16);
-        background: rgba(255, 255, 255, 0.86);
+        gap: 8px;
       }
 
-      .checkbox input {
+      .checkbox-group input[type='checkbox'] {
         width: auto;
         margin: 0;
       }
 
-      .actions {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .button-group {
+        display: flex;
         gap: 10px;
-        margin-top: 18px;
+        margin-top: 20px;
+        flex-wrap: wrap;
       }
 
       button {
-        padding: 12px 14px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 14px;
+        border-radius: 4px;
         cursor: pointer;
-        transition:
-          transform 120ms ease,
-          opacity 120ms ease,
-          background 120ms ease;
+        font-size: 14px;
+        position: relative;
+        transition: opacity 0.2s ease;
       }
 
-      button:hover:not(:disabled) {
-        transform: translateY(-1px);
+      .btn-primary {
+        background-color: #161643;
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .btn-danger {
+        background-color: #dc3545;
+        color: white;
       }
 
       button:disabled {
-        opacity: 0.55;
+        opacity: 0.6;
         cursor: not-allowed;
       }
 
-      .primary {
-        background: var(--accent);
+      .btn-loading {
+        opacity: 0.7;
+      }
+
+      .btn-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .btn-loading span {
+        opacity: 0;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 240px;
+        background-color: #333;
         color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 12px;
+        line-height: 1.4;
+        position: absolute;
+        z-index: 1000;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -120px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       }
 
-      .secondary {
-        background: var(--secondary);
-        color: #fff;
+      .tooltip .tooltip-text::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
       }
 
-      .neutral {
-        background: #dfd5c7;
-        color: var(--text);
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
       }
 
-      .danger {
-        background: var(--danger);
-        color: #fff;
+      .tooltip button:disabled + .tooltip-text {
+        background-color: #666;
       }
 
-      .viewer {
-        padding: 18px;
-        min-height: 760px;
-      }
-
-      .viewer-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: center;
-        margin-bottom: 14px;
-      }
-
-      .viewer-head h2,
-      .logs h2 {
-        margin: 0;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-
-      #sdk-root {
-        min-height: 640px;
-        border-radius: 18px;
-        border: 1px dashed rgba(59, 43, 23, 0.2);
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.94),
-          rgba(246, 240, 230, 0.92)
-        );
+      .sdk-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-height: 400px;
         overflow: hidden;
       }
 
+      .section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+      }
+
+      .section h3 {
+        margin-top: 0;
+        color: #161643;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+      }
+
+      .status-pills {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0 20px;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
       .logs {
-        margin-top: 20px;
-        padding: 18px;
-      }
-
-      #logs {
-        margin-top: 12px;
-        padding: 14px;
-        min-height: 180px;
-        max-height: 260px;
-        overflow: auto;
-        border-radius: 16px;
-        background: #1d1712;
-        color: #f7efe3;
-        font:
-          12px/1.5 'SFMono-Regular',
-          Consolas,
-          monospace;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 12px;
         white-space: pre-wrap;
-      }
-
-      .note {
-        margin-top: 14px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      @media (max-width: 1080px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-
-        .viewer {
-          min-height: 620px;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .layout {
-          width: min(100% - 20px, 100%);
-          margin-top: 10px;
-        }
-
-        .hero,
-        .panel,
-        .viewer,
-        .logs {
-          border-radius: 18px;
-        }
-
-        .actions,
-        .field.two-up {
-          grid-template-columns: 1fr;
-        }
-
-        #sdk-root {
-          min-height: 520px;
-        }
+        margin-top: 20px;
       }
     </style>
   </head>
   <body>
-    <div class="layout">
-      <section class="hero">
-        <h1>Chekin IV SDK Sandbox</h1>
-        <p>
-          Standalone host page for testing the published
-          <code>@chekinapp/iv-sdk</code> package from npm. Load the package, adjust IV
-          configuration, render the iframe, and inspect callbacks and emitted events.
-        </p>
-        <div class="status-row">
-          <div class="pill" id="package-status">Package: not loaded</div>
-          <div class="pill" id="instance-status">SDK: not initialized</div>
-          <div class="pill" id="render-status">Iframe: not rendered</div>
-        </div>
-      </section>
+    <div class="container">
+      <h1>Chekin IV SDK Sandbox</h1>
 
-      <main class="grid">
-        <section class="panel">
+      <div class="status-pills">
+        <div class="pill" id="package-status">Package: not loaded</div>
+        <div class="pill" id="instance-status">SDK: not initialized</div>
+        <div class="pill" id="render-status">Iframe: not rendered</div>
+        <div class="pill" id="viewer-url">Iframe URL: pending</div>
+      </div>
+
+      <div class="controls">
+        <form id="sdkForm">
           <div class="section">
-            <h2>Package Loader</h2>
-            <div class="fields">
-              <div class="field">
+            <h3>SDK Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
                 <label for="packageSource">Package Source</label>
                 <select id="packageSource" onchange="updatePackageUrl()">
                   <option value="npm" selected>npm (jsDelivr)</option>
-                  <option value="local">local path / URL</option>
+                  <option value="local">Local path / URL</option>
                 </select>
               </div>
-              <div class="field">
+              <div class="form-group">
                 <label for="packageVersion">Published Package Version</label>
                 <select id="packageVersion" onchange="updatePackageUrl()">
-                  <option value="latest" selected>latest</option>
-                  <option value="custom">custom</option>
+                  <option value="latest" selected>Latest</option>
+                  <option value="custom">Custom</option>
                 </select>
               </div>
-              <div class="field">
-                <label for="customPackageVersion">Custom npm version</label>
+              <div class="form-group">
+                <label for="customPackageVersion">Custom npm Version</label>
                 <input
                   id="customPackageVersion"
                   type="text"
-                  placeholder="Example: 0.1.0"
+                  placeholder="e.g., 0.1.0"
                   disabled
                 />
               </div>
-              <div class="field">
-                <label for="localPackagePath">Local module path or URL</label>
+              <div class="form-group">
+                <label for="localPackagePath">Local Module Path or URL</label>
                 <input
                   id="localPackagePath"
                   type="text"
@@ -367,17 +284,17 @@
                   disabled
                 />
               </div>
-              <div class="field">
-                <label for="packageUrl">Resolved module import</label>
+              <div class="form-group">
+                <label for="packageUrl">Resolved Module Import</label>
                 <input id="packageUrl" type="text" readonly />
               </div>
             </div>
           </div>
 
           <div class="section">
-            <h2>IV Config</h2>
-            <div class="fields">
-              <div class="field">
+            <h3>Core Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
                 <label for="apiKey">API Key</label>
                 <input
                   id="apiKey"
@@ -386,7 +303,7 @@
                   placeholder="Required"
                 />
               </div>
-              <div class="field">
+              <div class="form-group">
                 <label for="baseUrl">Iframe Base URL</label>
                 <input
                   id="baseUrl"
@@ -395,100 +312,104 @@
                   placeholder="https://cdn.chekin.com/iv-sdk/latest/index.html"
                 />
               </div>
-              <div class="field two-up">
-                <div class="field">
-                  <label for="version">Iframe Version</label>
-                  <input
-                    id="version"
-                    type="text"
-                    value="latest"
-                    placeholder="latest, dev, 0.1.0"
-                  />
-                </div>
-                <div class="field">
-                  <label for="language">Language</label>
-                  <select id="language">
-                    <option value="en" selected>en</option>
-                    <option value="es">es</option>
-                    <option value="fr">fr</option>
-                    <option value="de">de</option>
-                    <option value="it">it</option>
-                    <option value="pt">pt</option>
-                  </select>
-                </div>
+              <div class="form-group">
+                <label for="version">Iframe Version</label>
+                <input
+                  id="version"
+                  type="text"
+                  value="latest"
+                  placeholder="latest, dev, 0.1.0"
+                />
               </div>
-              <div class="field two-up">
-                <div class="field">
-                  <label for="mode">Mode</label>
-                  <select id="mode">
-                    <option value="ocr" selected>ocr</option>
-                    <option value="biomatch">biomatch</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="forceLivenessMechanism">Force Liveness Mechanism</label>
-                  <select id="forceLivenessMechanism">
-                    <option value="">unset</option>
-                    <option value="AUTO">AUTO</option>
-                    <option value="CLIENT">CLIENT</option>
-                    <option value="SERVER">SERVER</option>
-                  </select>
-                </div>
+              <div class="form-group">
+                <label for="language">Language</label>
+                <select id="language">
+                  <option value="en" selected>English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="it">Italian</option>
+                  <option value="pt">Portuguese</option>
+                </select>
               </div>
-              <label class="checkbox">
-                <input id="enableLiveness" type="checkbox" checked />
-                <span>Enable liveness</span>
-              </label>
-              <label class="checkbox">
-                <input id="optional" type="checkbox" />
-                <span>Mark verification as optional</span>
-              </label>
-              <label class="checkbox">
-                <input id="autoHeight" type="checkbox" checked />
-                <span>Auto height</span>
-              </label>
-              <label class="checkbox">
-                <input id="enableLogging" type="checkbox" checked />
-                <span>Enable SDK debug logging</span>
-              </label>
+              <div class="form-group">
+                <label for="mode">Mode</label>
+                <select id="mode">
+                  <option value="ocr" selected>OCR</option>
+                  <option value="biomatch">BioMatch</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="forceLivenessMechanism">Force Liveness Mechanism</label>
+                <select id="forceLivenessMechanism">
+                  <option value="">Unset</option>
+                  <option value="AUTO">AUTO</option>
+                  <option value="CLIENT">CLIENT</option>
+                  <option value="SERVER">SERVER</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <div class="section">
-            <h2>Setup Data</h2>
-            <div class="fields">
-              <div class="field two-up">
-                <div class="field">
-                  <label for="countryCode">Country Code</label>
-                  <input
-                    id="countryCode"
-                    type="text"
-                    value="ES"
-                    maxlength="2"
-                    placeholder="ES"
-                  />
+            <h3>Behavior Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input id="enableLiveness" type="checkbox" checked />
+                  <label for="enableLiveness">Enable Liveness</label>
                 </div>
-                <label class="checkbox">
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input id="optional" type="checkbox" />
+                  <label for="optional">Optional Verification</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input id="autoHeight" type="checkbox" checked />
+                  <label for="autoHeight">Auto Height</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <input id="enableLogging" type="checkbox" checked />
+                  <label for="enableLogging">Enable SDK Debug Logging</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Setup Data</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="countryCode">Country Code</label>
+                <input id="countryCode" type="text" value="ES" maxlength="2" placeholder="ES" />
+              </div>
+              <div class="form-group">
+                <div class="checkbox-group">
                   <input id="isLeader" type="checkbox" checked />
-                  <span>Guest is booking leader</span>
-                </label>
+                  <label for="isLeader">Guest Is Booking Leader</label>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="section">
-            <h2>Styling</h2>
-            <div class="fields">
-              <div class="field">
-                <label for="stylesLink">Stylesheet URL</label>
+            <h3>UI Configuration</h3>
+            <div class="grid">
+              <div class="form-group">
+                <label for="stylesLink">Styles Link</label>
                 <input
                   id="stylesLink"
                   type="url"
-                  placeholder="https://example.com/iv-sdk.css"
+                  placeholder="URL to custom CSS file"
                 />
               </div>
-              <div class="field">
-                <label for="styles">Inline CSS</label>
+              <div class="form-group">
+                <label for="styles">Custom Styles</label>
                 <textarea
                   id="styles"
                   placeholder=".page { background: #fffaf2; }"
@@ -497,55 +418,90 @@
             </div>
           </div>
 
-          <div class="actions">
-            <button class="primary" type="button" onclick="loadPackage()">
-              Load Package
-            </button>
-            <button class="secondary" type="button" onclick="initializeSDK()">
-              Initialize SDK
-            </button>
-            <button class="primary" type="button" onclick="initializeAndRender()">
-              Initialize + Render
-            </button>
-            <button class="secondary" type="button" onclick="renderSDK()">
-              Render SDK
-            </button>
-            <button class="danger" type="button" onclick="destroySDK()">
-              Destroy SDK
-            </button>
-            <button class="neutral" type="button" onclick="clearLogs()">
-              Clear Logs
-            </button>
-            <button class="neutral" type="button" onclick="saveConfiguration()">
-              Save Config
-            </button>
-            <button class="neutral" type="button" onclick="resetConfiguration()">
-              Reset Config
-            </button>
+          <div class="section">
+            <h3>Available Event Callbacks</h3>
+            <p>The following callbacks and events will be logged when they occur:</p>
+            <ul>
+              <li><strong>onReady</strong> and <strong>onMounted</strong></li>
+              <li><strong>onHeightChanged</strong> and <strong>onStepChanged</strong></li>
+              <li><strong>onCompleted</strong>, <strong>onFailed</strong>, and <strong>onError</strong></li>
+              <li><strong>onConnectionError</strong> and SDK event bus emissions</li>
+            </ul>
           </div>
 
-          <p class="note">
-            The loader can import either the published npm package from jsDelivr or a
-            local module path such as <code>./dist/index.js</code>. Use a real Chekin API
-            key before rendering.
-          </p>
-        </section>
-
-        <section>
-          <div class="viewer">
-            <div class="viewer-head">
-              <h2>Iframe Viewer</h2>
-              <div class="pill" id="viewer-url">Iframe URL: pending</div>
+          <div class="button-group">
+            <div class="tooltip">
+              <button type="button" class="btn-primary" id="loadPackageBtn" onclick="loadPackage()">
+                <span>Load Package</span>
+              </button>
+              <span class="tooltip-text">Load the IV SDK package from npm or a local module path. This must complete before initialization.</span>
             </div>
-            <div id="sdk-root"></div>
+            <div class="tooltip">
+              <button type="button" class="btn-primary" id="initializeSDKBtn" onclick="initializeSDK()">
+                <span>Initialize SDK</span>
+              </button>
+              <span class="tooltip-text">Create a new SDK instance with the current form configuration.</span>
+            </div>
+            <div class="tooltip">
+              <button type="button" class="btn-secondary" id="renderSDKBtn" onclick="renderSDK()">
+                <span>Render SDK</span>
+              </button>
+              <span class="tooltip-text">Render the initialized IV SDK into the container below.</span>
+            </div>
+            <div class="tooltip">
+              <button
+                type="button"
+                class="btn-primary"
+                id="initAndRenderBtn"
+                onclick="initializeAndRender()"
+              >
+                <span>Initialize &amp; Render</span>
+              </button>
+              <span class="tooltip-text">Initialize the SDK and immediately render the iframe.</span>
+            </div>
+            <div class="tooltip">
+              <button type="button" class="btn-danger" id="destroySDKBtn" onclick="destroySDK()">
+                <span>Destroy SDK</span>
+              </button>
+              <span class="tooltip-text">Destroy the current SDK instance and clear the render container.</span>
+            </div>
+            <div class="tooltip">
+              <button type="button" class="btn-secondary" id="clearLogsBtn" onclick="clearLogs()">
+                <span>Clear Logs</span>
+              </button>
+              <span class="tooltip-text">Clear the log output below.</span>
+            </div>
           </div>
 
-          <div class="logs">
-            <h2>Logs</h2>
-            <div id="logs">Logs will appear here.</div>
+          <div
+            class="button-group"
+            style="margin-top: 10px; border-top: 1px solid #e0e0e0; padding-top: 15px;"
+          >
+            <div class="tooltip">
+              <button type="button" class="btn-secondary" id="saveConfigBtn" onclick="saveConfiguration()">
+                <span>Save Configuration</span>
+              </button>
+              <span class="tooltip-text">Save the current form values to localStorage.</span>
+            </div>
+            <div class="tooltip">
+              <button type="button" class="btn-secondary" id="loadConfigBtn" onclick="loadConfiguration()">
+                <span>Load Configuration</span>
+              </button>
+              <span class="tooltip-text">Restore a previously saved configuration from localStorage.</span>
+            </div>
+            <div class="tooltip">
+              <button type="button" class="btn-secondary" id="resetConfigBtn" onclick="resetConfiguration()">
+                <span>Reset to Defaults</span>
+              </button>
+              <span class="tooltip-text">Reset the sandbox form and clear the stored configuration.</span>
+            </div>
           </div>
-        </section>
-      </main>
+        </form>
+      </div>
+
+      <div id="root" class="sdk-container"></div>
+
+      <div class="logs" id="logs">Logs will appear here...</div>
     </div>
 
     <script type="module">
@@ -555,11 +511,63 @@
       const instanceStatus = document.getElementById('instance-status');
       const renderStatus = document.getElementById('render-status');
       const viewerUrl = document.getElementById('viewer-url');
-      const sdkRoot = document.getElementById('sdk-root');
+      const sdkRoot = document.getElementById('root');
 
       let sdkModule = null;
       let sdkInstance = null;
       let packageLoadNonce = 0;
+      let isLoading = false;
+
+      const defaultConfig = {
+        packageSource: 'npm',
+        packageVersion: 'latest',
+        customPackageVersion: '',
+        localPackagePath: './dist/index.js',
+        apiKey: 'replace-with-real-chekin-api-key',
+        baseUrl: 'https://cdn.chekin.com/iv-sdk/latest/index.html',
+        version: 'latest',
+        language: 'en',
+        mode: 'ocr',
+        forceLivenessMechanism: '',
+        enableLiveness: true,
+        optional: false,
+        autoHeight: true,
+        enableLogging: true,
+        countryCode: 'ES',
+        isLeader: true,
+        stylesLink: '',
+        styles: '',
+      };
+
+      function setButtonLoading(buttonId, loading = true) {
+        const button = document.getElementById(buttonId);
+        if (!button) {
+          return;
+        }
+
+        if (loading) {
+          button.classList.add('btn-loading');
+          button.disabled = true;
+        } else {
+          button.classList.remove('btn-loading');
+        }
+      }
+
+      function updateButtonStates() {
+        if (isLoading) {
+          return;
+        }
+
+        document.getElementById('loadPackageBtn').disabled = false;
+        document.getElementById('initializeSDKBtn').disabled = !sdkModule;
+        document.getElementById('renderSDKBtn').disabled = !sdkInstance;
+        document.getElementById('initAndRenderBtn').disabled = !sdkModule;
+        document.getElementById('destroySDKBtn').disabled = !sdkInstance;
+        document.getElementById('clearLogsBtn').disabled = false;
+        document.getElementById('saveConfigBtn').disabled = false;
+        document.getElementById('loadConfigBtn').disabled = false;
+        document.getElementById('resetConfigBtn').disabled = false;
+      }
 
       function log(message, payload) {
         const stamp = new Date().toLocaleTimeString();
@@ -567,7 +575,8 @@
         const body =
           payload === undefined ? line : `${line}\n${stringifyValue(payload, 2)}`;
 
-        logsElement.textContent = `${body}\n\n${logsElement.textContent}`.trim();
+        logsElement.textContent += `${body}\n`;
+        logsElement.scrollTop = logsElement.scrollHeight;
         console.log(message, payload);
       }
 
@@ -622,6 +631,23 @@
         document.getElementById('packageVersion').disabled = packageSource !== 'npm';
         localPackagePathInput.disabled = packageSource !== 'local';
         document.getElementById('packageUrl').value = getPackageUrl();
+
+        if (sdkModule) {
+          if (sdkInstance) {
+            sdkInstance.destroy();
+            sdkInstance = null;
+            sdkRoot.innerHTML = '';
+          }
+
+          sdkModule = null;
+          packageStatus.textContent = 'Package: not loaded';
+          instanceStatus.textContent = 'SDK: not initialized';
+          renderStatus.textContent = 'Iframe: not rendered';
+          viewerUrl.textContent = 'Iframe URL: pending';
+          log('Package source changed. Reload the package before initializing again.');
+        }
+
+        updateButtonStates();
       }
 
       function collectConfig() {
@@ -715,8 +741,11 @@
         packageLoadNonce += 1;
         const nonce = packageLoadNonce;
 
+        isLoading = true;
+        setButtonLoading('loadPackageBtn');
+        updateButtonStates();
         packageStatus.textContent = 'Package: loading';
-        log('Loading package module', {packageSource, packageUrl});
+        log('Loading package module', { packageSource, packageUrl });
 
         try {
           sdkModule = await import(`${packageUrl}?cacheBust=${nonce}`);
@@ -730,6 +759,10 @@
           packageStatus.textContent = 'Package: load failed';
           log('Package load failed', error?.message || error);
           throw error;
+        } finally {
+          isLoading = false;
+          setButtonLoading('loadPackageBtn', false);
+          updateButtonStates();
         }
       }
 
@@ -740,55 +773,98 @@
       }
 
       async function initializeSDK() {
-        await ensurePackageLoaded();
+        isLoading = true;
+        setButtonLoading('initializeSDKBtn');
+        updateButtonStates();
 
-        if (sdkInstance) {
-          sdkInstance.destroy();
-          sdkInstance = null;
-          renderStatus.textContent = 'Iframe: cleared';
-          sdkRoot.innerHTML = '';
+        try {
+          await ensurePackageLoaded();
+
+          if (sdkInstance) {
+            sdkInstance.destroy();
+            sdkInstance = null;
+            renderStatus.textContent = 'Iframe: cleared';
+            sdkRoot.innerHTML = '';
+          }
+
+          const config = collectConfig();
+          viewerUrl.textContent = `Iframe URL: ${config.baseUrl || 'default'} | version=${config.version || 'latest'}`;
+
+          log('Initializing SDK', config);
+          sdkInstance = new sdkModule.ChekinIVSDK(config);
+          bindEventListeners();
+          instanceStatus.textContent = 'SDK: initialized';
+        } catch (error) {
+          log('Initialization failed', error?.message || error);
+          throw error;
+        } finally {
+          isLoading = false;
+          setButtonLoading('initializeSDKBtn', false);
+          updateButtonStates();
         }
-
-        const config = collectConfig();
-        viewerUrl.textContent = `Iframe URL: ${config.baseUrl || 'default'} | version=${config.version || 'latest'}`;
-
-        log('Initializing SDK', config);
-        sdkInstance = new sdkModule.ChekinIVSDK(config);
-        bindEventListeners();
-        instanceStatus.textContent = 'SDK: initialized';
       }
 
       async function renderSDK() {
-        if (!sdkInstance) {
-          await initializeSDK();
-        }
+        isLoading = true;
+        setButtonLoading('renderSDKBtn');
+        updateButtonStates();
 
-        log('Rendering SDK into #sdk-root');
-        sdkRoot.innerHTML = '';
-        await sdkInstance.render(sdkRoot);
-        renderStatus.textContent = 'Iframe: rendered';
+        try {
+          if (!sdkInstance) {
+            await initializeSDK();
+          }
+
+          log('Rendering SDK into #root');
+          sdkRoot.innerHTML = '';
+          await sdkInstance.render(sdkRoot);
+          renderStatus.textContent = 'Iframe: rendered';
+        } catch (error) {
+          log('Render failed', error?.message || error);
+          throw error;
+        } finally {
+          isLoading = false;
+          setButtonLoading('renderSDKBtn', false);
+          updateButtonStates();
+        }
       }
 
       async function initializeAndRender() {
-        await initializeSDK();
-        await renderSDK();
+        isLoading = true;
+        setButtonLoading('initAndRenderBtn');
+        updateButtonStates();
+
+        try {
+          await initializeSDK();
+          await renderSDK();
+        } finally {
+          isLoading = false;
+          setButtonLoading('initAndRenderBtn', false);
+          updateButtonStates();
+        }
       }
 
       function destroySDK() {
-        if (sdkInstance) {
-          sdkInstance.destroy();
-          sdkInstance = null;
-          log('SDK destroyed');
-        }
+        setButtonLoading('destroySDKBtn');
 
-        sdkRoot.innerHTML = '';
-        instanceStatus.textContent = 'SDK: not initialized';
-        renderStatus.textContent = 'Iframe: not rendered';
-        viewerUrl.textContent = 'Iframe URL: pending';
+        try {
+          if (sdkInstance) {
+            sdkInstance.destroy();
+            sdkInstance = null;
+            log('SDK destroyed');
+          }
+
+          sdkRoot.innerHTML = '';
+          instanceStatus.textContent = 'SDK: not initialized';
+          renderStatus.textContent = 'Iframe: not rendered';
+          viewerUrl.textContent = 'Iframe URL: pending';
+        } finally {
+          setButtonLoading('destroySDKBtn', false);
+          updateButtonStates();
+        }
       }
 
       function clearLogs() {
-        logsElement.textContent = 'Logs cleared.';
+        logsElement.textContent = 'Logs cleared...\n';
       }
 
       function saveConfiguration() {
@@ -817,6 +893,22 @@
         log('Configuration saved');
       }
 
+      function populateForm(config) {
+        Object.entries(config).forEach(([key, value]) => {
+          const element = document.getElementById(key);
+
+          if (!element) {
+            return;
+          }
+
+          if (element.type === 'checkbox') {
+            element.checked = Boolean(value);
+          } else {
+            element.value = value ?? '';
+          }
+        });
+      }
+
       function loadConfiguration() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
@@ -825,58 +917,28 @@
         }
 
         const data = JSON.parse(raw);
-        document.getElementById('packageSource').value = data.packageSource || 'npm';
-        document.getElementById('packageVersion').value = data.packageVersion || 'latest';
-        document.getElementById('customPackageVersion').value =
-          data.customPackageVersion || '';
-        document.getElementById('localPackagePath').value =
-          data.localPackagePath || './dist/index.js';
-        document.getElementById('apiKey').value = data.apiKey || '';
-        document.getElementById('baseUrl').value =
-          data.baseUrl || 'https://cdn.chekin.com/iv-sdk/latest/index.html';
-        document.getElementById('version').value = data.version || 'latest';
-        document.getElementById('language').value = data.language || 'en';
-        document.getElementById('mode').value = data.mode || 'ocr';
-        document.getElementById('forceLivenessMechanism').value =
-          data.forceLivenessMechanism || '';
-        document.getElementById('enableLiveness').checked = data.enableLiveness ?? true;
-        document.getElementById('optional').checked = data.optional ?? false;
-        document.getElementById('autoHeight').checked = data.autoHeight ?? true;
-        document.getElementById('enableLogging').checked = data.enableLogging ?? true;
-        document.getElementById('countryCode').value = data.countryCode || 'ES';
-        document.getElementById('isLeader').checked = data.isLeader ?? true;
-        document.getElementById('stylesLink').value = data.stylesLink || '';
-        document.getElementById('styles').value = data.styles || '';
-
+        populateForm(data);
         updatePackageUrl();
         log('Configuration restored');
       }
 
       function resetConfiguration() {
         localStorage.removeItem(STORAGE_KEY);
-
-        document.getElementById('packageSource').value = 'npm';
-        document.getElementById('packageVersion').value = 'latest';
-        document.getElementById('customPackageVersion').value = '';
-        document.getElementById('localPackagePath').value = './dist/index.js';
-        document.getElementById('apiKey').value = 'replace-with-real-chekin-api-key';
-        document.getElementById('baseUrl').value =
-          'https://cdn.chekin.com/iv-sdk/latest/index.html';
-        document.getElementById('version').value = 'latest';
-        document.getElementById('language').value = 'en';
-        document.getElementById('mode').value = 'ocr';
-        document.getElementById('forceLivenessMechanism').value = '';
-        document.getElementById('enableLiveness').checked = true;
-        document.getElementById('optional').checked = false;
-        document.getElementById('autoHeight').checked = true;
-        document.getElementById('enableLogging').checked = true;
-        document.getElementById('countryCode').value = 'ES';
-        document.getElementById('isLeader').checked = true;
-        document.getElementById('stylesLink').value = '';
-        document.getElementById('styles').value = '';
-
+        populateForm(defaultConfig);
         updatePackageUrl();
         log('Configuration reset');
+      }
+
+      function autoSaveConfiguration() {
+        const inputs = document
+          .getElementById('sdkForm')
+          .querySelectorAll('input, select, textarea');
+
+        inputs.forEach(input => {
+          input.addEventListener('change', () => {
+            setTimeout(saveConfiguration, 100);
+          });
+        });
       }
 
       document
@@ -893,11 +955,27 @@
       window.destroySDK = destroySDK;
       window.clearLogs = clearLogs;
       window.saveConfiguration = saveConfiguration;
+      window.loadConfiguration = loadConfiguration;
       window.resetConfiguration = resetConfiguration;
       window.updatePackageUrl = updatePackageUrl;
 
+      const savedConfig = localStorage.getItem(STORAGE_KEY);
+      if (savedConfig) {
+        try {
+          populateForm(JSON.parse(savedConfig));
+          log('Sandbox loaded. Configuration restored from localStorage.');
+        } catch (error) {
+          populateForm(defaultConfig);
+          log('Failed to restore saved configuration', error?.message || error);
+        }
+      } else {
+        populateForm(defaultConfig);
+        log('Sandbox loaded with default configuration.');
+      }
+
       updatePackageUrl();
-      loadConfiguration();
+      autoSaveConfiguration();
+      updateButtonStates();
     </script>
   </body>
 </html>
