@@ -37,7 +37,10 @@ export function formatChekinUrl(config: ChekinIVSDKConfig): UrlConfigResult {
     url.searchParams.set('language', config.language);
   }
 
-  url.searchParams.set('mode', config.mode ?? IDENTITY_VERIFICATION_TYPES.ocr);
+  url.searchParams.set(
+    'mode',
+    config.mode?.toLowerCase() ?? IDENTITY_VERIFICATION_TYPES.ocr,
+  );
 
   if (config.enableLiveness !== undefined) {
     url.searchParams.set('enableLiveness', String(config.enableLiveness));
