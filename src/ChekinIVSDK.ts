@@ -91,7 +91,13 @@ export class ChekinIVSDK {
   }
 
   updateConfig(newConfig: Partial<ChekinIVSDKConfig>): void {
+    console.log(newConfig);
     const normalizedConfig = normalizeConfig(newConfig);
+    console.log(normalizedConfig);
+    console.log({
+      ...this.config,
+      ...normalizedConfig,
+    });
     const nextConfig = {
       ...this.config,
       ...normalizedConfig,
